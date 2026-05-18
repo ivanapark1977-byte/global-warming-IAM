@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IAM Dashboard — User Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #1a1712; --ink2: #4a4640; --muted: #9a9589;
+  --rule:   #e4e0d6; --page: #faf8f4; --card:  #ffffff;
+  --red:    #c0392b; --blue: #2980b9; --green: #27ae60; --orange: #e67e22;
+  --mono:   'DM Mono', monospace; --serif: 'Fraunces', Georgia, serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;background:var(--page);}
+body{color:var(--ink);font-family:var(--serif);line-height:1.78;padding:0;}
+.page{max-width:920px;margin:0 auto;padding:64px 44px 120px;}
+@media(max-width:640px){.page{padding:40px 20px 80px;}}
+
+h1{font-size:2.5rem;font-weight:400;letter-spacing:-.02em;margin-bottom:8px;}
+h2{font-size:1.38rem;font-weight:400;margin:52px 0 12px;padding-bottom:10px;border-bottom:2px solid var(--rule);letter-spacing:-.01em;}
+h3{font-size:1.06rem;font-weight:500;margin:30px 0 8px;font-family:var(--mono);}
+h4{font-size:.9rem;font-weight:500;margin:20px 0 4px;color:var(--ink2);font-family:var(--mono);}
+p{margin-bottom:14px;}
+.lead{font-size:1.17rem;color:var(--ink2);margin-bottom:32px;max-width:740px;line-height:1.7;}
+.subtitle{font-family:var(--mono);font-size:.78rem;color:var(--muted);margin-bottom:44px;letter-spacing:.05em;text-transform:uppercase;}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:18px 0 26px;font-size:.84rem;}
+th{font-family:var(--mono);font-size:.73rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;border-bottom:2px solid var(--rule);text-align:left;}
+td{padding:7px 12px;border-bottom:1px solid var(--rule);font-family:var(--mono);vertical-align:top;}
+td:first-child{color:var(--ink);font-weight:500;}
+td.val{color:var(--blue);}
+td.note{color:var(--ink2);font-family:var(--serif);font-size:.82rem;}
+tr:last-child td{border-bottom:none;}
+
+/* Callout boxes */
+.box{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--blue);padding:16px 20px;margin:20px 0;border-radius:2px;}
+.box.warn{border-left-color:var(--orange);}
+.box.note{border-left-color:var(--muted);}
+.box.crit{border-left-color:var(--red);}
+.box p{margin-bottom:0;}
+.box p+p{margin-top:8px;}
+
+/* Equation */
+.eq{font-family:var(--mono);font-size:.84rem;background:var(--card);border:1px solid var(--rule);padding:12px 16px;margin:14px 0;border-radius:2px;overflow-x:auto;color:var(--blue);}
+
+/* Inline code */
+code{font-family:var(--mono);font-size:.84em;background:var(--card);border:1px solid var(--rule);padding:1px 5px;border-radius:2px;}
+
+/* Section label */
+.section-label{font-family:var(--mono);font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px;}
+hr{border:none;border-top:1px solid var(--rule);margin:52px 0;}
+
+/* Table of contents */
+.toc{background:var(--card);border:1px solid var(--rule);padding:22px 26px;margin-bottom:44px;border-radius:2px;}
+.toc ol{padding-left:18px;margin:8px 0 0;}
+.toc li{margin:4px 0;font-size:.88rem;}
+.toc a{color:var(--blue);text-decoration:none;}
+.toc a:hover{text-decoration:underline;}
+.toc ol ol{margin:3px 0 3px 16px;}
+
+/* Slider anatomy diagram */
+.slider-demo{background:var(--card);border:1px solid var(--rule);padding:14px 18px;margin:14px 0;border-radius:2px;font-family:var(--mono);font-size:.82rem;color:var(--ink2);}
+.slider-row{display:flex;align-items:center;gap:10px;margin:8px 0;}
+.slider-bar{flex:1;height:6px;background:linear-gradient(to right,#e4e0d6,#2980b9);border-radius:3px;position:relative;}
+.slider-thumb{width:14px;height:14px;background:#2980b9;border-radius:50%;position:absolute;top:-4px;left:50%;transform:translateX(-50%);}
+
+/* Parameter tag badges */
+.tag{display:inline-block;font-family:var(--mono);font-size:.7rem;padding:2px 8px;border-radius:2px;margin:0 3px 0 0;vertical-align:middle;}
+.tag-policy{background:#ebf5fb;color:#1a5f8a;}
+.tag-uncertainty{background:#fef9f0;color:#7d4e0f;}
+.tag-fixed{background:#f0f7f0;color:#196e3e;}
+.tag-iea{background:#f9f0f8;color:#6b1e6b;}
+
+/* Warning sidebar */
+.aside{float:right;width:36%;margin:0 0 16px 20px;background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--orange);padding:12px 14px;font-size:.82rem;line-height:1.5;}
+.aside strong{display:block;font-family:var(--mono);font-size:.72rem;text-transform:uppercase;color:var(--orange);margin-bottom:5px;}
+@media(max-width:640px){.aside{float:none;width:100%;margin:12px 0;}}
+
+/* IEA comparison table */
+.iea-table td.better{color:var(--green);font-weight:500;}
+.iea-table td.worse{color:var(--red);}
+.iea-table td.close{color:var(--blue);}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="section-label">User Manual</div>
+<h1>Climate–Economy IAM Dashboard</h1>
+<div class="subtitle">Revision 9 &nbsp;·&nbsp; May 2026 &nbsp;·&nbsp; For technical users and policy analysts</div>
+
+<p class="lead">This manual explains how to operate the IAM dashboard, what each control does, where the fixed constants come from, and where the model diverges from established benchmark scenarios such as the IEA World Energy Outlook. It is intended for users who need to understand the mechanics behind the outputs, not merely how to read the charts.</p>
+
+<div class="toc">
+  <strong style="font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Contents</strong>
+  <ol>
+    <li><a href="#purpose">Purpose and Design Philosophy</a></li>
+    <li><a href="#interface">Interface Overview</a></li>
+    <li><a href="#scenarios">Preset Scenarios</a></li>
+    <li><a href="#policy-sliders">Policy Sliders</a></li>
+    <li><a href="#uncertainty-sliders">Uncertainty Sliders</a></li>
+    <li><a href="#damage">Damage Function Selector</a></li>
+    <li><a href="#geomode">Geopolitical Mode</a></li>
+    <li><a href="#fixed-params">Fixed Parameter Reference</a></li>
+    <li><a href="#methodology">Module Methodology</a>
+      <ol>
+        <li><a href="#m-energy">Energy Transition</a></li>
+        <li><a href="#m-emissions">Emissions</a></li>
+        <li><a href="#m-climate">Climate</a></li>
+        <li><a href="#m-economy">Economy and Damages</a></li>
+        <li><a href="#m-cdr">Carbon Dioxide Removal</a></li>
+        <li><a href="#m-supply">Supply Curve Feedbacks</a></li>
+        <li><a href="#m-impacts">Physical Impacts</a></li>
+      </ol>
+    </li>
+    <li><a href="#shortcomings">Shortcomings and Simplifications</a></li>
+    <li><a href="#iea">Divergence from IEA Scenarios</a></li>
+    <li><a href="#equations">Equation Quick Reference</a></li>
+  </ol>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="purpose">1. Purpose and Design Philosophy</h2>
+
+<p>The dashboard is a <strong>first-order Integrated Assessment Model (IAM)</strong> — a single-region, annual-time-step simulation spanning 2024–2100. It couples four energy sectors, a GDP-damage economy, a simple climate physics block, endogenous carbon dioxide removal, and supply curve feedbacks for oil and LNG.</p>
+
+<p>The design makes three deliberate trade-offs in favour of transparency:</p>
+
+<ul style="margin:0 0 16px 22px;">
+  <li style="margin:5px 0"><strong>Simplicity over completeness.</strong> Every equation is visible in the dashboard source code. No proprietary solver, no opaque model structure. A reader who understands basic algebra can trace any output back to its inputs.</li>
+  <li style="margin:5px 0"><strong>Speed over fidelity.</strong> The model runs in milliseconds in a browser. This makes real-time slider interaction possible but rules out the iterative optimisation, vintage capital tracking, and spatial resolution of GCAM, MESSAGE-GLOBIOM, or REMIND.</li>
+  <li style="margin:5px 0"><strong>Insight over precision.</strong> The primary output is a sense of which levers matter most and by how much, not a precise forecast. Outputs should be read as order-of-magnitude estimates with the uncertainty ranges in §10 of the technical documentation taken seriously.</li>
+</ul>
+
+<div class="box note"><p>The model is calibrated to reproduce IEA WEO 2025 and IPCC AR6 anchor points at 2024. Projected trajectories are deliberately cross-checked against IEA scenario families — but significant structural differences mean the model diverges from IEA results in predictable ways, discussed in detail in <a href="#iea">§11</a>.</p></div>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="interface">2. Interface Overview</h2>
+
+<p>The dashboard has three functional zones:</p>
+
+<table>
+  <tr><th>Zone</th><th>Location</th><th>Function</th></tr>
+  <tr><td>Header bar</td><td class="val">Top strip</td><td class="note">Scenario selector buttons and four policy sliders that define the policy environment</td></tr>
+  <tr><td>Sidebar panel</td><td class="val">Left column</td><td class="note">Uncertainty sliders, damage function selector, and geopolitical mode toggle</td></tr>
+  <tr><td>Main chart area</td><td class="val">Right / centre</td><td class="note">Temperature, emissions, GDP, energy mix, supply curves, physical impact charts — all update live as sliders move</td></tr>
+</table>
+
+<p>Every slider triggers an immediate full model re-run (2024–2100) on <code>oninput</code>. There is no "Run" button. Scenario preset buttons snap all sliders to a predefined configuration and re-run.</p>
+
+<p>The summary bar at the bottom of the sidebar shows key 2100 outcomes for the current parameter set: temperature, CO₂ concentration equivalent, GDP index, sea level rise, and fleet electrification.</p>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="scenarios">3. Preset Scenarios</h2>
+
+<p>Three preset scenarios are available via the header buttons. They configure both the policy sliders and several hidden internal parameters simultaneously.</p>
+
+<table>
+  <tr><th>Scenario</th><th>Analogue</th><th>Carbon tax start</th><th>Tax growth</th><th>AEEI</th><th>Max deploy</th><th>T<sub>2100</sub> (central)</th></tr>
+  <tr><td>No Policy</td><td class="note">IEA CPS</td><td class="val">$0/t</td><td class="val">$0/yr</td><td class="val">1.8%/yr</td><td class="val">0.5%/yr</td><td class="val">~3.0°C</td></tr>
+  <tr><td>Current Policy</td><td class="note">IEA STEPS</td><td class="val">Sector-specific</td><td class="val">$0–1.5/yr</td><td class="val">1.8%/yr</td><td class="val">2.0%/yr</td><td class="val">~2.9°C</td></tr>
+  <tr><td>Strong Action</td><td class="note">IEA NZE (partial)</td><td class="val">$50/t</td><td class="val">$7/yr</td><td class="val">3.5%/yr</td><td class="val">3.0%/yr</td><td class="val">~2.1°C</td></tr>
+</table>
+
+<h4>Current Policy sector carbon prices (fixed per scenario)</h4>
+<table>
+  <tr><th>Sector</th><th>Initial price (2024)</th><th>Annual growth</th><th>Rationale</th></tr>
+  <tr><td>Power</td><td class="val">$35/tCO₂</td><td class="val">+$1.5/yr</td><td class="note">Reflects ETS-weighted average across EU, UK, California, RGGI</td></tr>
+  <tr><td>Transport</td><td class="val">$12/tCO₂</td><td class="val">+$0.5/yr</td><td class="note">Fuel tax carbon equivalent; lower than power due to political economy</td></tr>
+  <tr><td>Buildings</td><td class="val">$8/tCO₂</td><td class="val">+$0.3/yr</td><td class="note">Minimal current policy; mostly voluntary or building code driven</td></tr>
+  <tr><td>Industry</td><td class="val">$15/tCO₂</td><td class="val">+$0.8/yr</td><td class="note">ETS coverage varies; industrial competitiveness exemptions reduce effective price</td></tr>
+</table>
+
+<p>The small gap between No Policy and Current Policy temperatures (~0.1°C) may surprise users. This is an important structural result: most of the energy transition under Current Policy is driven by renewable cost curves and EV economics that operate regardless of policy, not by carbon pricing alone. The meaningful climate leverage appears in the No Policy → Strong Action gap (~0.9°C), where higher carbon prices, subsidies, and accelerated deployment caps amplify the cost-driven transition.</p>
+
+<div class="box warn"><p><strong>Why doesn't Current Policy match IEA STEPS at 2.7°C?</strong> The IEA STEPS projects ~2.7°C for current stated policies, while this model gives ~2.9°C. The 0.2°C gap has two main causes: (1) IEA STEPS includes detailed policy implementation pathways (EV mandates, appliance standards, building codes) that directly constrain fossil use beyond what carbon prices alone accomplish; (2) IEA applies a higher effective TCRE (~0.55°C/TtCO₂) due to feedback amplifiers not captured in our first-order model. See <a href="#iea">§11</a> for a full comparison.</p></div>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="policy-sliders">4. Policy Sliders</h2>
+
+<p>The four header sliders represent <em>policy decisions</em> — choices a government or regulator can make. They apply on top of (or instead of) the scenario defaults. Moving any of them away from the preset values causes the scenario indicator to show "Custom".</p>
+
+<table>
+  <tr><th>Slider</th><th>Range</th><th>Default (Current Policy)</th><th>Unit</th><th>Effect</th></tr>
+  <tr><td>New carbon tax growth</td><td class="val">$0–20</td><td class="val">$0/yr</td><td class="val">$/tCO₂/yr</td><td class="note">Adds to sector-specific carbon prices at the same rate across all sectors each year. $7/yr ≈ Strong Action trajectory. Note that this growth rate applies to a universal tax on top of the sector-specific prices; it is not a replacement for them.</td></tr>
+  <tr><td>Renewable subsidy</td><td class="val">$0–40</td><td class="val">$12/MWh</td><td class="val">$/MWh</td><td class="note">Subtracted from the clean LCOE in the power sector. Equivalent to production tax credits, feed-in tariffs, or contract-for-difference subsidies. Strong Action uses $20/MWh. At $40/MWh the subsidy alone makes renewables ~$5/MWh cheaper than unsubsidised coal in 2024.</td></tr>
+  <tr><td>Grid deployment ceiling</td><td class="val">0.2–3.5%/yr</td><td class="val">1.5%/yr</td><td class="val">% fossil share reduction/yr</td><td class="note">Hard cap on how fast fossil share can fall in the power sector each year. Represents real-world grid integration, permitting, and manufacturing bottlenecks. At 0.2%/yr the energy transition is supply-chain limited regardless of economics. Strong Action uses 3.0%/yr — aggressive but within IEA NZE assumptions for advanced economies.</td></tr>
+  <tr><td>Green H₂ subsidy</td><td class="val">$0–80</td><td class="val">$15/MWh</td><td class="val">$/MWh of H₂</td><td class="note">Subtracted from the green hydrogen cost curve used in the industry sector. Represents H₂ contracts-for-difference (e.g. UK, EU), production incentives (US IRA), or direct capital grants. At $80/MWh the model approximates the US IRA maximum incentive for clean hydrogen production.</td></tr>
+</table>
+
+<div class="box note"><p><strong>Interaction effects:</strong> The subsidy and deployment ceiling sliders interact. A high subsidy that makes renewables very cheap will not accelerate the transition beyond the deployment ceiling — grid infrastructure and permitting remain binding. Conversely, raising the ceiling without a subsidy only matters once renewables are already cheaper than fossil alternatives on a market basis.</p></div>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="uncertainty-sliders">5. Uncertainty Sliders</h2>
+
+<p>The four sidebar sliders represent <em>forecast uncertainties</em> — parameters whose true values are contested in the scientific or economic literature. Unlike policy sliders, they do not represent choices; they represent genuine unknowns. Each has a P10–central–P90 range derived from empirical evidence or IPCC assessments.</p>
+
+<h3>5.1 TCRE — Transient Climate Response to Cumulative Emissions</h3>
+<table>
+  <tr><th>Attribute</th><th>Value</th></tr>
+  <tr><td>Unit</td><td class="val">°C per 1,000 GtCO₂ (°C/TtCO₂)</td></tr>
+  <tr><td>Slider range</td><td class="val">0.26 to 0.78</td></tr>
+  <tr><td>Central value</td><td class="val">0.45</td></tr>
+  <tr><td>Source</td><td class="note">IPCC AR6 WG1 §5.5 likely range; P10 = 0.26, P90 = 0.63 (extended to 0.78 in this model to cover the AR6 very likely range)</td></tr>
+</table>
+<p>TCRE is the single most important uncertainty in the model, accounting for roughly 60% of 2100 temperature variance in No Policy runs. It encapsulates the cumulative carbon budget concept: total warming is approximately proportional to total cumulative CO₂ emissions, regardless of the emission rate. At P10 (0.26), the same No Policy cumulative emissions produce about 1.2°C less warming by 2100 than at P90 (0.78).</p>
+<p>In revision 9, the model applies a non-linearity correction to TCRE above 2,000 GtCO₂ cumulative:</p>
+<div class="eq">tcreCorrFactor = 1 + max(0, (netCumCO₂ − 2,000) / 15,000)</div>
+<p>This correction acknowledges that linear TCRE underestimates warming at high cumulative emissions because Earth System feedbacks (permafrost thaw, reduced ocean uptake) amplify the temperature response. The correction adds up to +20% at 5,000 GtCO₂ — roughly +0.15 to 0.25°C in No Policy scenarios.</p>
+
+<div class="box warn"><p><strong>TCRE upper bound caveat:</strong> The IPCC AR6 very likely range for TCRE is 0.12–0.62 °C/TtCO₂, with the P95 at 0.63. The slider maximum of 0.78 was set at the prior release and extends slightly beyond the AR6 assessed range. Combined with the r9 non-linearity correction, the effective upper bound reaches ~0.87°C/TtCO₂ at high emission levels, exceeding IPCC's assessed 95th percentile. Users exploring tail risks should note that TCRE > 0.65 in this model represents a scenario outside the IPCC very likely range.</p></div>
+
+<h3>5.2 Transition Responsiveness</h3>
+<table>
+  <tr><th>Attribute</th><th>Value</th></tr>
+  <tr><td>Unit</td><td class="val">Dimensionless multiplier on the switching rate equation</td></tr>
+  <tr><td>Slider range</td><td class="val">0.40 to 1.20</td></tr>
+  <tr><td>Central value</td><td class="val">0.70</td></tr>
+  <tr><td>Source</td><td class="note">P10–P90 of technology adoption rate literature; reflects social, institutional, and infrastructure inertia</td></tr>
+</table>
+<p>This parameter scales the speed at which each sector shifts fossil share in response to cost signals. It enters the switching equation as a direct multiplier: double the responsiveness, double the annual fossil share reduction for a given cost advantage. At P10 (0.40), economic cost advantages take twice as long to drive adoption as at the central value — consistent with historical lags in building retrofit or industrial process switching. At P90 (1.20), transitions are faster than the central assumption — consistent with a world where regulatory mandates, social norms, and infrastructure are already aligned with decarbonisation.</p>
+<p>The effect of this slider is strongly amplified by carbon pricing: in No Policy, where cost advantages are small, varying responsiveness has a minor effect. In Strong Action, it is the second-largest driver of temperature uncertainty (22% of variance), because large carbon price signals are either quickly translated into switching (high responsiveness) or dissipated by institutional friction (low responsiveness).</p>
+
+<h3>5.3 Fossil Carbon Intensity</h3>
+<table>
+  <tr><th>Attribute</th><th>Value</th></tr>
+  <tr><td>Unit</td><td class="val">tCO₂ per GJ of fossil energy (blended T+B+I average)</td></tr>
+  <tr><td>Slider range</td><td class="val">0.068 to 0.079</td></tr>
+  <tr><td>Central value</td><td class="val">0.072</td></tr>
+  <tr><td>Source</td><td class="note">IEA WEO 2025 P10–P90 of blended fossil fuel CI; lower bound = IEA standard (combustion only); upper bound includes upstream fugitive methane at GWP-100 accounting</td></tr>
+</table>
+<p>This is the blended carbon intensity of fossil fuels across the Transport, Buildings, and Industry sectors. The range is relatively narrow (±8% of central), making this the smallest sensitivity in the OAT analysis. The distinction between the P10 and P90 values is meaningful:</p>
+<ul style="margin:0 0 14px 22px;">
+  <li style="margin:5px 0">P10 = 0.068: IEA standard baseline. Combustion-only accounting, no upstream methane leakage premium beyond the explicit LNG module.</li>
+  <li style="margin:5px 0">P90 = 0.079: Includes higher upstream methane leakage (e.g. US shale gas or Permian flaring) at GWP-100. Values above 0.068 trigger an LNG methane leakage uplift in the CI calculation.</li>
+</ul>
+
+<h3>5.4 CDR Ceiling</h3>
+<table>
+  <tr><th>Attribute</th><th>Value</th></tr>
+  <tr><td>Unit</td><td class="val">GtCO₂/yr maximum removal rate at full scale</td></tr>
+  <tr><td>Slider range</td><td class="val">3.5 to 14</td></tr>
+  <tr><td>Central value</td><td class="val">7.0</td></tr>
+  <tr><td>Source</td><td class="note">Expert elicitation on feasible CDR scale by 2100; IPCC AR6 WG3 range for CDR deployment scenarios</td></tr>
+</table>
+<p>CDR (Carbon Dioxide Removal) only deploys when the carbon tax exceeds the CDR cost per tonne, which begins at $300/tCO₂ in 2050 and falls at 5%/yr thereafter. This means CDR is irrelevant in No Policy (carbon tax never exceeds the cost threshold) and only modestly relevant in Strong Action (it first crosses the cost threshold around 2053 and ramps over 30 years). The ceiling matters only once CDR is already deploying; in practice its contribution is 6% of temperature variance in Strong Action and effectively zero in No Policy.</p>
+<p>The IEA NZE pathway assumes 7.6 GtCO₂/yr by 2050 — roughly three times what this model achieves by that date due to the 30-year ramp-up constraint. This is one of the primary reasons Strong Action gives ~2.1°C rather than the NZE's 1.5°C. See <a href="#iea">§11</a>.</p>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="damage">6. Damage Function Selector</h2>
+
+<p>Four options determine how temperature feeds back into GDP growth. All functions take ΔT = max(0, T − 1.29°C), i.e. warming above the 2024 observed level.</p>
+
+<table>
+  <tr><th>Option</th><th>Formula (damageFrac)</th><th>GDP loss at 3°C total warming</th><th>Framework</th></tr>
+  <tr><td>IEA (none)</td><td class="val">0</td><td class="note">No damage feedback</td><td class="note">IEA default — models economic pathways without explicit GDP-temperature feedback</td></tr>
+  <tr><td>Nordhaus</td><td class="val">0.01579·ΔT + 0.00362·ΔT²</td><td class="note">~−0.5%/yr</td><td class="note">DICE-2023 calibrated; the ×0.12 scalar is derived from this function</td></tr>
+  <tr><td>Medium</td><td class="val">0.02·ΔT + 0.015·ΔT²</td><td class="note">~−0.8%/yr</td><td class="note">Burke et al. (2015) central coefficients, DICE-style application</td></tr>
+  <tr><td>High-end†</td><td class="val">0.028·ΔT + 0.032·ΔT²</td><td class="note">~−1.2%/yr</td><td class="note">Burke et al. (2015) upper-bound coefficients, DICE-style application</td></tr>
+</table>
+
+<p>The <strong>×0.12 scalar</strong> that converts damageFrac to an annual GDP growth rate reduction is calibrated to the Nordhaus/DICE-2023 function. It is applied unchanged to Medium and High-end — an approximation, since those functions were not independently calibrated in this framework.</p>
+
+<div class="box crit"><p><strong>† High-end — important limitation:</strong> The High-end option uses Burke et al. (2015) coefficients but applies them as a DICE-style <em>level effect</em> on annual GDP growth. The original Burke empirical model estimates damages as a <em>growth-rate effect</em>, meaning losses compound into the capital stock year-on-year. This model's High-end therefore substantially understates the cumulative losses that a full Burke implementation would project — potentially by a factor of 3–5× over a 76-year horizon at high warming levels. Use High-end as an upper-bound sensitivity within the DICE paradigm, not as a replication of the Burke framework.</p></div>
+
+<p>The "IEA (none)" option reproduces IEA's own practice: IEA WEO scenarios report economic pathways but exclude GDP-temperature damage feedbacks. Selecting this option makes the model's GDP trajectory directly comparable to IEA projections, but produces an optimistic picture of the economic cost of climate change.</p>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="geomode">7. Geopolitical Mode</h2>
+
+<p>Two geopolitical settings control the LNG supply curve and associated oil price shocks:</p>
+
+<table>
+  <tr><th>Mode</th><th>Setting</th><th>Effect</th></tr>
+  <tr><td>Pre-war</td><td class="val">Default</td><td class="note">Standard LNG supply waterfall. Qatar (Ras Laffan) operates at full capacity. LNG prices reflect the cost waterfall with current trade routes.</td></tr>
+  <tr><td>Post-war</td><td class="val">Shock mode</td><td class="note">Ras Laffan attack (March 2026 scenario): S4 and S6 liquefaction trains destroyed, Strait of Hormuz closed. Roughly 25% of global LNG supply capacity is removed. JKM, TTF, and HH prices spike; oil prices reflect demand destruction from economic shock. Gas flex premium in power sector rises.</td></tr>
+</table>
+
+<p>The geopolitical mode does not affect the long-run trajectory — it applies as a permanent supply shock from 2026 onward, with LNG prices adjusting to a new higher clearing price. The model does not simulate recovery or replacement of Qatari capacity.</p>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="fixed-params">8. Fixed Parameter Reference</h2>
+
+<p>The following parameters are hardcoded — they do not appear as sliders but are central to the model's behaviour. They are documented here for users who need to assess sensitivity to assumptions that the interface does not expose.</p>
+
+<h3>8.1 Initial Conditions (2024 calibration anchors)</h3>
+<table>
+  <tr><th>Parameter</th><th>Symbol</th><th>Value</th><th>Source</th></tr>
+  <tr><td>Initial temperature</td><td class="val">TEMP₀</td><td class="val">1.29°C</td><td class="note">NASA GISS surface temperature analysis, 2024 annual mean above 1850–1900 baseline</td></tr>
+  <tr><td>Initial energy intensity</td><td class="val">EI₀</td><td class="val">7.2 EJ/T$</td><td class="note">IEA World Energy Statistics 2024; GDP in 2015 PPP terms</td></tr>
+  <tr><td>Initial GDP (indexed)</td><td class="val">GDP₀</td><td class="val">100 (= $90.5T)</td><td class="note">IMF World Economic Outlook 2024; 2015 PPP basis</td></tr>
+  <tr><td>Initial global CO₂ emissions</td><td class="val">—</td><td class="val">37.4 GtCO₂</td><td class="note">IEA CO₂ Emissions from Fuel Combustion 2024; model reproduces this exactly</td></tr>
+  <tr><td>Initial global car fleet</td><td class="val">—</td><td class="val">1.50 billion vehicles</td><td class="note">OICA / IEA Global EV Outlook 2024</td></tr>
+  <tr><td>Initial EV fleet</td><td class="val">—</td><td class="val">55 million vehicles</td><td class="note">IEA Global EV Outlook 2024 (3.7% of fleet)</td></tr>
+  <tr><td>LNG reference price</td><td class="val">LNG_P_REF</td><td class="val">$11.4/MMBtu</td><td class="note">JKM 2024 annual average</td></tr>
+</table>
+
+<h3>8.2 Sector Architecture</h3>
+<table>
+  <tr><th>Sector</th><th>Energy weight</th><th>Fossil₀</th><th>Fossil floor</th><th>Responsiveness ×</th></tr>
+  <tr><td>Power</td><td class="val">40%</td><td class="val">0.60</td><td class="val">0.02</td><td class="val">1.5×</td></tr>
+  <tr><td>Transport</td><td class="val">22%</td><td class="val">0.92</td><td class="val">0.10</td><td class="val">0.8×</td></tr>
+  <tr><td>Buildings</td><td class="val">16%</td><td class="val">0.46</td><td class="val">0.05</td><td class="val">0.6×</td></tr>
+  <tr><td>Industry</td><td class="val">22%</td><td class="val">0.74</td><td class="val">0.15</td><td class="val">0.4×</td></tr>
+</table>
+<p>Sector weights and initial fossil shares are calibrated to IEA World Energy Balances 2024. Fossil floors represent the minimum technically and economically achievable fossil share within the model's time horizon — they are not physical limits but approximations of residual hard-to-abate uses (aviation, shipping, process heat). The power sector floor of 0.02 (2%) represents backup capacity requirements; industry's 0.15 (15%) represents non-substitutable process heat and chemical feedstocks.</p>
+
+<h3>8.3 Technology Cost Assumptions</h3>
+<table>
+  <tr><th>Technology</th><th>Parameter</th><th>Value</th><th>Source</th></tr>
+  <tr><td>Renewables (blended)</td><td class="val">LCOE_REN₀</td><td class="val">$45/MWh</td><td class="note">IEA WEO 2024 global average for wind+solar blended (pre-firming)</td></tr>
+  <tr><td>Fossil power (average)</td><td class="val">LCOE_FOSS_POWER</td><td class="val">$100/MWh</td><td class="note">Coal $110, gas $90 blended; includes fuel at current spot prices</td></tr>
+  <tr><td>LCOE floor (renewables)</td><td class="val">—</td><td class="val">$14/MWh</td><td class="note">Technical minimum — land, grid connection, O&M only. Solar in MENA or wind in Patagonia approaches this floor in 2024.</td></tr>
+  <tr><td>Transport fossil LCOE</td><td class="val">LCOE_FOSS_TRANS</td><td class="val">$47/MWh</td><td class="note">Oil energy carrier equivalent at ~$80/bbl; includes carbon tax where applicable</td></tr>
+  <tr><td>Buildings fossil LCOE</td><td class="val">LCOE_FOSS_BUILD</td><td class="val">$27/MWh</td><td class="note">Retail gas at ~$8/MMBtu thermal equivalent</td></tr>
+  <tr><td>Industry fossil LCOE</td><td class="val">LCOE_FOSS_IND</td><td class="val">$20/MWh</td><td class="note">Industrial gas at ~$6/MMBtu process heat</td></tr>
+  <tr><td>Green H₂ (2024)</td><td class="val">LCOE_H2_2024</td><td class="val">$150/MWh</td><td class="note">~$5/kg H₂ at current electrolysis and electricity costs</td></tr>
+  <tr><td>Storage base cost</td><td class="val">STORAGE_BASE</td><td class="val">$25/MWh</td><td class="note">Grid balancing cost at 15% renewable share; Li-ion at ~2024 market prices</td></tr>
+  <tr><td>Storage learning rate</td><td class="val">STORAGE_LEARN</td><td class="val">18%/doubling</td><td class="note">BloombergNEF 2024; Wood Mackenzie 2024 empirical Li-ion learning rate</td></tr>
+  <tr><td>CDR cost at 2050</td><td class="val">CDR_COST_2050</td><td class="val">$300/tCO₂</td><td class="note">Portfolio weighted: DACCS ~$400, BECCS ~$150, enhanced weathering ~$100; IPCC AR6 WG3 Table 12.6</td></tr>
+  <tr><td>CDR learning rate</td><td class="val">CDR_LEARN</td><td class="val">5%/yr</td><td class="note">Cost halving time ~14 years; based on nascent CDR industry trajectories (BloombergNEF 2024)</td></tr>
+  <tr><td>CDR ramp constraint</td><td class="val">CDR_RAMP</td><td class="val">30 years</td><td class="note">Supply chain and permitting constraint to full scale deployment</td></tr>
+</table>
+
+<h3>8.4 Climate and Economy</h3>
+<table>
+  <tr><th>Parameter</th><th>Symbol</th><th>Value</th><th>Source</th></tr>
+  <tr><td>Thermal inertia time-constant</td><td class="val">τ</td><td class="val">15 yr</td><td class="note">1-box ocean model; IPCC AR6 likely range 10–25 yr (Forster et al. 2021; Zanna et al. 2019)</td></tr>
+  <tr><td>Non-CO₂ forcing amplitude</td><td class="val">nonCO₂_base</td><td class="val">0.25°C</td><td class="note">Maximum non-CO₂ swing (CH₄, N₂O, aerosols); calibrated to IPCC AR6 SSP range</td></tr>
+  <tr><td>Non-CO₂ abatement reference price</td><td class="val">—</td><td class="val">$100/tCO₂</td><td class="note">Carbon price at which non-CO₂ abatement fraction reaches 1.0 (full abatement assumed at $100+)</td></tr>
+  <tr><td>Non-CO₂ warming trend (no policy)</td><td class="val">—</td><td class="val">0.0039°C/yr</td><td class="note">+0.30°C by 2100 without policy; calibrated to IPCC AR6 SSP3-7.0 non-CO₂ forcing central</td></tr>
+  <tr><td>Coal share of fossil power</td><td class="val">COAL_SHARE₀</td><td class="val">0.617</td><td class="note">IEA WEB 2024; coal fraction of thermal power generation</td></tr>
+  <tr><td>Gas share of fossil power</td><td class="val">GAS_SHARE₀</td><td class="val">0.383</td><td class="note">IEA WEB 2024; gas fraction of thermal power generation</td></tr>
+  <tr><td>Coal carbon intensity</td><td class="val">—</td><td class="val">0.128 tCO₂/GJ</td><td class="note">IEA; includes combustion CO₂ only</td></tr>
+  <tr><td>Gas (power) carbon intensity</td><td class="val">—</td><td class="val">0.074 tCO₂/GJ</td><td class="note">IEA; CCGT average including upstream</td></tr>
+  <tr><td>Pipeline gas CI</td><td class="val">CI_GAS_PIPE</td><td class="val">0.059 tCO₂/GJ</td><td class="note">Combustion + typical upstream; pipeline delivery</td></tr>
+  <tr><td>LNG carbon premium</td><td class="val">CI_LNG_PREMIUM</td><td class="val">0.017 tCO₂/GJ</td><td class="note">Liquefaction energy + shipping + incremental methane leakage over pipeline</td></tr>
+  <tr><td>GDP damage multiplier</td><td class="val">—</td><td class="val">×0.12</td><td class="note">Nordhaus/DICE-2023 calibration scalar. Converts normalised damageFrac to annual GDP growth rate reduction. Approximate for Medium and High-end functions.</td></tr>
+  <tr><td>SLR rate coefficient</td><td class="val">a</td><td class="val">0.80 cm/(°C·yr)</td><td class="note">Rahmstorf (2007) semi-empirical model; calibrated to IPCC AR6 medians for SSP2-4.5 and SSP5-8.5</td></tr>
+  <tr><td>Fleet saturation</td><td class="val">—</td><td class="val">2.20 billion vehicles</td><td class="note">Logistic saturation; IEA GEO 2024 long-run vehicle stock projections</td></tr>
+  <tr><td>Gas flex premium (low penetration)</td><td class="val">—</td><td class="val">$15/MWh</td><td class="note">Base value at ≤40% renewable share; scales to $30/MWh at ≥80% (ERCOT/CAISO scarcity pricing)</td></tr>
+  <tr><td>Energy intensity floor</td><td class="val">EI_floor</td><td class="val">max(1.2, 1.5×0.998^t) EJ/T$</td><td class="note">Hard lower bound of 1.2 EJ/T$ prevents physically implausible EI levels; second-law thermodynamic constraint on industrial heat</td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="methodology">9. Module Methodology</h2>
+
+<h3 id="m-energy">9.1 Energy Transition</h3>
+
+<p>Each sector's fossil share evolves annually according to a switching equation:</p>
+<div class="eq">switch_s(t) = clamp( costAdv_s × COST_RESPONSE × RESP_s × frict_s ,  0,  maxDeploy_s )</div>
+<div class="eq">fos_s(t+1) = max( floor_s,  fos_s(t) − switch_s(t) )</div>
+
+<p>The cost advantage signal is:</p>
+<div class="eq">costAdv_s = max(0, (lcoe_fossil_s − lcoe_clean_s) / lcoe_fossil_s)</div>
+
+<p>The friction term prevents switching from accelerating as the fossil share approaches its floor:</p>
+<div class="eq">frict_s = min(1, (fos_s − floor_s) / range_s)</div>
+
+<p>Clean technology costs follow Wright's Law (learning by doing):</p>
+<div class="eq">lcoe_ren(t) = max(14, LCOE_REN₀ × (1 − learnRate)^doublings − renewSubsidy)</div>
+<p>Doublings are counted from cumulative capacity deployed (endogenous). The learning rate slider (expressed in %/doubling) enters as <code>(1 − learnRate/100)^doublings</code> — it is a per-doubling rate following Wright's Law, not an annual rate. The model label shows %/doubling, but earlier documentation versions incorrectly labelled this as %/yr. This was corrected in r9.</p>
+
+<p>At high renewable penetration, firming costs (storage, grid balancing) add a penetration-dependent premium:</p>
+<div class="eq">lcoe_firmed(t) = lcoe_ren(t) + STORAGE_BASE × (1 − 0.18)^doublings × max(0, (renew − 0.15) / 0.35)^1.8</div>
+
+<p>The industry sector uses a green hydrogen pathway with its own learning curve:</p>
+<div class="eq">lcoe_H2(t) = H2_capex × (1 − 0.15)^doublings + lcoe_ren × 1.65 − h2Subsidy</div>
+
+<h3 id="m-emissions">9.2 Emissions</h3>
+<div class="eq">em_total = em_coal_pow + em_gas_pow + em_TBI − cdrRate</div>
+<div class="eq">em_coal_pow = E_pow × coal_pow × 0.128 tCO₂/GJ</div>
+<div class="eq">em_gas_pow  = E_pow × gas_pow × 0.074 tCO₂/GJ</div>
+<div class="eq">em_TBI = (E_trans × fos_trans + E_build × fos_build + E_ind × fos_ind) × CI_TBI_eff</div>
+<div class="eq">CI_TBI_eff = CI_FOSSIL + lngShare × CI_LNG_PREMIUM × 0.3</div>
+<p>The 0.3 factor accounts for the fact that only ~30% of T+B+I fossil energy is gas; the remainder is oil (transport) and coal (industry). Total energy in each sector is EI × GDP_abs × sector_weight.</p>
+
+<h3 id="m-climate">9.3 Climate</h3>
+<p>Temperature tracks toward an equilibrium set by cumulative CO₂ and non-CO₂ forcing, with a 15-year ocean thermal lag:</p>
+<div class="eq">T_eq(t) = TEMP₀ + nonCO₂_increment(t) + TCRE × netCumCO₂(t) × tcreCorrFactor(t)</div>
+<div class="eq">T(t) = T(t−1) + (T_eq(t) − T(t−1)) / 15</div>
+<p>Non-CO₂ forcing scales continuously with policy depth:</p>
+<div class="eq">abateFrac = min(1, ctax_avg / 100)  &nbsp;&nbsp; [0 at no policy → 1.0 at ≥$100/tCO₂ average]</div>
+<div class="eq">nonCO₂_increment = [nonCO₂_raw × abateFrac + max(0, nonCO₂_raw) × (1 − abateFrac)] + [min(0.30, t × 0.0039) × (1 − abateFrac)]</div>
+<p>The first bracket is the abatement benefit (cooling as fossil share falls, scaled by policy depth); the second is the warming trend from fugitive emissions (rising with fossil output, suppressed by policy).</p>
+
+<h3 id="m-economy">9.4 Economy and Damages</h3>
+<div class="eq">GDP(t+1) = GDP(t) × (1 + clamp(baseGDP − damageFrac × 0.12 − transDrag − cdrDrag,  −5%, 9%))</div>
+<p>Transition drag represents stranded asset write-downs and capital reallocation costs, declining over time as the system matures:</p>
+<div class="eq">transDrag = transCost × switchRate / 0.01 × max(0, 1 − t/40)</div>
+<p>CDR drag represents the resource cost of scaling up carbon removal technology at pace:</p>
+<div class="eq">cdrDrag = cdrRate × CDR_cost(t) / (GDP_abs × 1e12)</div>
+
+<h3 id="m-cdr">9.5 Carbon Dioxide Removal</h3>
+<p>CDR deploys endogenously once the carbon tax exceeds its levelised cost:</p>
+<div class="eq">CDR_cost(t) = 300 × (1 − 0.05)^(t−2050)  &nbsp;&nbsp; [active from 2050 only]</div>
+<div class="eq">cdrRate(t) = min(1, (ctax − CDR_cost) / CDR_cost) × CDR_MAX × min(1, yearsDeployed / 30)</div>
+<p>The 30-year ramp reflects supply chain and permitting constraints. CDR cannot exceed CDR_MAX (the ceiling slider). The cost-trigger mechanism means CDR is inactive below the threshold price, which in Strong Action is first crossed around 2053.</p>
+
+<h3 id="m-supply">9.6 Supply Curve Feedbacks</h3>
+<p>The model's own energy demand drives oil and LNG prices through supply cost curve interpolation — prices are not exogenous scenario assumptions but emergent from the modelled demand trajectory. Oil demand is converted from the model's transport energy:
+</p>
+<div class="eq">demand_mbpd = E_total × 0.22 × fos_trans × 0.4477 mb/d per EJ/yr</div>
+<p>LNG prices derive from model LNG demand mapped onto a supply waterfall of 300+ individual project cost bars (LCOE by source region and technology). Clearing price is the cost of the marginal project needed to meet demand. Spot price benchmarks (JKM, TTF, HH) are derived from the JKM clearing price using fixed regional spreads.</p>
+
+<h3 id="m-impacts">9.7 Physical Impacts</h3>
+<p>Sea level rise follows the Rahmstorf semi-empirical rate model, calibrated to IPCC AR6 medians:</p>
+<div class="eq">SLR(t) = 0.80 × Σ max(0, T(yr) − 1.29)  &nbsp;&nbsp; for yr = 2025..t  &nbsp;&nbsp; [cm above 2024]</div>
+<p>The car fleet grows logistically toward a 2.20 billion vehicle saturation, with fossil and electric vehicles split by the transport fossil share.</p>
+<div class="box note"><p>SLR omits potential large-scale ice sheet instabilities (marine ice cliff instability, WAIS destabilisation), which could add 0.5–2 m under scenarios above 3°C. Our SLR projections should be considered conservative in high-warming cases.</p></div>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="shortcomings">10. Shortcomings and Simplifications</h2>
+
+<p>The following known limitations should inform how results are used and communicated. They are grouped by severity.</p>
+
+<h3>Critical structural simplifications</h3>
+
+<p><strong>Single-region world.</strong> The model treats the planet as a single representative agent with uniform energy mix, carbon price, and technology access. In reality, OECD countries, China, and the Global South are on very different trajectories — China's coal trajectory alone differs sharply from the global average, and developing economy energy access growth is a distinct dynamic not captured here. Single-region aggregation can mask the distributional dimension of climate change (who causes it vs who suffers it) and overstates the coherence of a "world carbon price."</p>
+
+<p><strong>Damage function framework mismatch.</strong> All three damage function options apply a DICE-style level effect: damages reduce annual GDP growth but do not compound into the capital stock. The High-end coefficients are drawn from Burke et al. (2015), which is a growth-rate model where losses compound permanently. Using Burke coefficients in a DICE structure understates cumulative damages by a factor that grows with the time horizon — potentially 3–5× over 76 years at high warming. The model cannot faithfully implement Burke-style compounding damages without a more complex capital stock module.</p>
+
+<p><strong>Damages exclude the 2024 baseline.</strong> All damage functions condition on ΔT above 1.29°C — damages only accrue once warming exceeds today's already-elevated level. This omits the economic losses already occurring from observed warming (flooding, heat stress, agricultural disruption at 1.29°C). This is consistent with DICE methodology but understates total cumulative climate damages over 2024–2100 by roughly 0.1–0.3% of cumulative GDP.</p>
+
+<h3>Significant approximations</h3>
+
+<p><strong>Linear TCRE.</strong> The Transient Climate Response to Cumulative Emissions is treated as approximately linear, which is a good approximation to ~2,000 GtCO₂ but underestimates warming at higher cumulative emissions due to non-linear Earth System feedbacks. The r9 correction factor partially addresses this but is itself a simplified parameterisation, not a full Earth System Model treatment.</p>
+
+<p><strong>No carbon cycle feedbacks.</strong> Permafrost thaw (estimated 0.03–0.04°C/°C of additional warming), reduced ocean CO₂ uptake, and tropical forest dieback are not explicitly modelled. At No Policy levels (>3°C), these feedbacks could add 0.2–0.5°C by 2100 beyond our projections.</p>
+
+<p><strong>No agricultural methane or land-use emissions.</strong> The non-CO₂ term is a simplified aggregate capturing the correlation between fossil fuel use and methane/N₂O emissions. Agricultural methane (livestock, rice) and land-use CO₂ (deforestation) are not separately modelled. In scenarios with rapid economic growth and dietary shifts, these emissions could diverge significantly from the model's assumption.</p>
+
+<p><strong>Static supply curves.</strong> The oil and LNG supply cost waterfalls do not evolve with resource depletion, technology change (e.g., methane pyrolysis, blue hydrogen), or geopolitical restructuring (except the War Mode shock). Long-run supply curve evolution is likely to affect gas competitiveness against hydrogen.</p>
+
+<p><strong>No tipping elements or catastrophic risks.</strong> Threshold responses (West Antarctic Ice Sheet collapse, Amazon dieback, permafrost abrupt thaw) that could trigger step-changes in the climate-economy system are not modelled. This means the model almost certainly understates tail risk — the probability of outcomes above 4°C is higher than shown.</p>
+
+<h3>Minor approximations</h3>
+
+<p><strong>No behavioural demand reduction.</strong> The model does not capture modal shift (cars to transit), dietary change (less meat), or sufficiency behaviour. IEA NZE projects significant demand reduction from behaviour in transport and buildings; this model's demand is purely EI × GDP driven.</p>
+
+<p><strong>No critical mineral constraints.</strong> Battery supply chains, copper for electrification, rare earth elements for wind turbines — these physical supply constraints on the energy transition are not modelled. They could slow deployment beyond what the ceiling slider implies.</p>
+
+<p><strong>No trade or capital flows.</strong> Energy price signals do not trigger capital reallocation across regions, substitution of coal-heavy grid electricity for cleaner alternatives via interconnection, or technology transfer mechanisms.</p>
+
+<p><strong>Uniform carbon price within scenarios.</strong> Strong Action applies the same carbon price to all four sectors simultaneously, which is politically unrealistic. Sector-specific constraints (free allocation in industry, political resistance in transport) would reduce the real-world effectiveness of any uniform carbon price.</p>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="iea">11. Divergence from IEA Scenarios</h2>
+
+<p>The IEA World Energy Outlook defines four primary scenarios that this model's presets are designed to approximate. Understanding where and why the model diverges from IEA is essential for using it correctly alongside WEO results.</p>
+
+<h3>11.1 Scenario Mapping</h3>
+<table class="iea-table">
+  <tr><th>IEA Scenario</th><th>Model analogue</th><th>IEA T₂₁₀₀</th><th>Model T₂₁₀₀</th><th>Assessment</th></tr>
+  <tr><td>Current Policies (CPS)</td><td class="val">No Policy</td><td class="note">~2.9°C</td><td class="val">~3.0°C</td><td class="close">Close. 0.1°C gap attributable to IEA's higher effective TCRE and inclusion of policy reversal risk.</td></tr>
+  <tr><td>Stated Policies (STEPS)</td><td class="val">Current Policy</td><td class="note">~2.7°C</td><td class="val">~2.9°C</td><td class="worse">0.2°C gap. IEA captures mandate-driven deployment (EV standards, building codes) that this model omits.</td></tr>
+  <tr><td>Announced Pledges (APS)</td><td class="val">— (no direct analogue)</td><td class="note">~1.7°C</td><td class="val">n/a</td><td class="worse">Not modelled. Would require geographically differentiated net-zero pledges and conditional policy depth.</td></tr>
+  <tr><td>Net Zero Emissions (NZE)</td><td class="val">Strong Action</td><td class="note">1.5°C</td><td class="val">~2.1°C</td><td class="worse">0.6°C gap. See detailed analysis below. Strong Action is not an NZE implementation.</td></tr>
+</table>
+
+<h3>11.2 Why Strong Action Does Not Reach 1.5°C</h3>
+
+<p>The IEA NZE pathway is constructed specifically to limit warming to 1.5°C with no or limited overshoot. Our Strong Action scenario reaches approximately 2.1°C. The 0.6°C gap stems from five distinct structural differences:</p>
+
+<p><strong>(a) CDR scale and timing.</strong> This is the largest single driver of the gap. IEA NZE assumes 7.6 GtCO₂/yr of CDR by 2050, rising to ~9–10 GtCO₂/yr by 2080. In our model, CDR starts deploying only after the carbon tax exceeds $300/t (around 2053 in Strong Action), and then ramps over 30 years to a maximum of 7 GtCO₂/yr (central slider value). By 2100, our CDR has accumulated roughly 100–150 GtCO₂ of removal; IEA NZE accumulates over 500 GtCO₂. That 350+ GtCO₂ difference, multiplied by TCRE (0.45°C/TtCO₂), accounts for roughly 0.15–0.20°C of the gap. IEA's CDR assumptions depend heavily on BECCS (bioenergy with CCS) at land-use scales that most experts consider speculative and land-constrained.</p>
+
+<p><strong>(b) Carbon price trajectory and effective demand reduction.</strong> IEA NZE implies effective carbon prices of $130–250/t in advanced economies by 2030–2050, combined with regulatory mandates (EV bans, gas boiler bans, clean electricity standards) that constrain fossil use independent of price signals. Our Strong Action starts at $50/t and grows $7/yr, reaching $190/t by 2050 — broadly comparable in price level, but without any non-price mandates. IEA NZE's renewable deployment rate in power is close to 100% clean electricity in advanced economies by 2035, which our model cannot replicate because it relies on economic signals rather than regulatory mandates. This difference alone is responsible for perhaps 0.15°C.</p>
+
+<p><strong>(c) Effective TCRE.</strong> Our model uses the IPCC AR6 median TCRE of 0.45°C/TtCO₂. IEA's integrated modelling (using MAGICC or similar simple climate models coupled to IAMs) typically implies an effective TCRE of ~0.55°C/TtCO₂ because IEA's models include feedback amplifiers — permafrost carbon, aerosol adjustments, cloud feedbacks — that our first-order model omits. A higher effective TCRE means any given emission pathway requires more aggressive mitigation to hit the same temperature target. This asymmetry means that in a 1.5°C world, IEA achieves the target with a more aggressive mitigation pathway than ours, not because IEA is wrong but because IEA's climate model is more complete.</p>
+
+<p><strong>(d) Non-CO₂ gases.</strong> IEA NZE includes explicit modelling of methane from fossil fuel operations, agricultural methane, and industrial process gases (HFCs, SF₆, N₂O). These are targeted by specific regulatory measures in NZE — methane regulations for oil and gas, dietary shift, HFC phase-out. Our model captures only an aggregate non-CO₂ term that responds to average carbon price. It does not model the specific regulatory measures or the independent trajectory of agricultural methane.</p>
+
+<p><strong>(e) Demand-side behaviour and energy efficiency.</strong> IEA NZE projects significant demand reduction from modal shift (less private driving), dietary change (less meat, less food waste), and sufficiency behaviour (smaller homes, shared transport). These reduce total energy demand below what energy intensity improvement alone achieves. Our model's demand pathway is EI × GDP — energy intensity improves with carbon price and AEEI, but there is no explicit behavioural demand reduction separate from the EI term.</p>
+
+<h3>11.3 Why Current Policy Gives 2.9°C Rather Than IEA STEPS 2.7°C</h3>
+
+<p>The 0.2°C gap between our Current Policy and IEA STEPS has two causes:</p>
+
+<p><strong>Mandate-driven deployment.</strong> IEA STEPS incorporates EV purchase mandates, appliance efficiency standards, building codes, and grid connection requirements that directly constrain fossil demand beyond what carbon pricing alone achieves. For example, the EU and China have mandated effectively full EV sales shares by 2035, which in IEA's modelling drives rapid transport decarbonisation regardless of oil price. In our model, transport decarbonisation is driven entirely by the cost signal (oil price + carbon tax vs EV LCOE). This omission means our model underestimates the speed of technology adoption under stated policies.</p>
+
+<p><strong>Effective TCRE difference.</strong> As discussed above, IEA's climate model implies ~0.55°C/TtCO₂ while ours uses 0.45°C/TtCO₂. A higher TCRE means the same emissions path produces more warming, which means hitting the same 2.7°C in STEPS requires somewhat fewer cumulative emissions than our model implies — or conversely, that IEA's STEPS pathway produces more warming than a naive reading might suggest. The IEA STEPS figure of 2.7°C already accounts for the higher effective TCRE.</p>
+
+<h3>11.4 What the Model Gets Right vs IEA</h3>
+
+<table class="iea-table">
+  <tr><th>Aspect</th><th>Model approach</th><th>vs IEA</th></tr>
+  <tr><td>2024 calibration anchors</td><td class="note">GDP, EI, emissions, temperature all match IEA 2024 data exactly</td><td class="better">Consistent</td></tr>
+  <tr><td>Oil/LNG price endogeneity</td><td class="note">Prices emerge from model demand, not fixed scenario assumptions</td><td class="better">Better than WEO fixed-price approach for sensitivity analysis</td></tr>
+  <tr><td>Renewable learning curves</td><td class="note">Wright's Law, empirical BloombergNEF rates</td><td class="better">Consistent with IEA methodology</td></tr>
+  <tr><td>Storage cost learning</td><td class="note">18%/doubling, empirical Li-ion data</td><td class="better">Consistent with IEA</td></tr>
+  <tr><td>No Policy temperature</td><td class="note">~3.0°C vs IEA CPS ~2.9°C</td><td class="close">Within 0.1°C — acceptable for scenario analysis</td></tr>
+  <tr><td>Single-region simplification</td><td class="note">Global aggregate only</td><td class="worse">IEA has region-level detail; model cannot replicate country-level results</td></tr>
+  <tr><td>CDR deployment</td><td class="note">Cost-triggered, 30-yr ramp, 7 Gt/yr ceiling</td><td class="worse">IEA NZE has 7.6 Gt/yr by 2050; model does not deploy CDR at that scale or speed</td></tr>
+  <tr><td>Non-CO₂ gases</td><td class="note">Aggregate, carbon-price-driven</td><td class="worse">IEA models CH₄, HFCs, N₂O with sector-specific regulations</td></tr>
+  <tr><td>Demand-side behaviour</td><td class="note">EI × GDP only; no modal shift or dietary change</td><td class="worse">IEA NZE assumes significant demand reduction from behaviour</td></tr>
+  <tr><td>Capital stock dynamics</td><td class="note">No vintage capital tracking; no stranded asset value by technology</td><td class="worse">IEA models capital stock turnover explicitly</td></tr>
+</table>
+
+<h3>11.5 Appropriate Use Cases Given These Divergences</h3>
+
+<p>Given the structural differences above, the model is well-suited for:</p>
+<ul style="margin:0 0 14px 22px;">
+  <li style="margin:5px 0">Understanding which uncertain parameters drive the most temperature uncertainty (TCRE dominates)</li>
+  <li style="margin:5px 0">Exploring how policy levers interact — e.g. whether subsidy or carbon price is more effective given a specific technology cost trajectory</li>
+  <li style="margin:5px 0">Illustrating the feedback between oil demand, LNG prices, and the energy transition speed</li>
+  <li style="margin:5px 0">Comparing the relative magnitude of policy vs uncertainty in determining 2100 outcomes</li>
+  <li style="margin:5px 0">Teaching the structural mechanics of climate-economy modelling with full code transparency</li>
+</ul>
+
+<p>It is <em>not</em> appropriate for:</p>
+<ul style="margin:0 0 14px 22px;">
+  <li style="margin:5px 0">Projecting country or regional outcomes — the single-region assumption is too strong</li>
+  <li style="margin:5px 0">Claiming that Strong Action achieves 1.5°C — it does not, and the gap is structural, not a calibration error</li>
+  <li style="margin:5px 0">Quantifying the economic benefits of climate action with the High-end damage function — the DICE-style implementation substantially understates Burke-framework damages</li>
+  <li style="margin:5px 0">Policy analysis requiring technology vintage tracking, critical mineral constraints, or detailed financial flow modelling</li>
+</ul>
+
+<div class="box"><p><strong>Recommended practice:</strong> Use this model alongside — not instead of — IEA WEO results. It adds value by making the sensitivity to TCRE and technology learning rates explicit in real time, and by revealing the role of oil and LNG supply curve feedbacks that IEA's fixed-price scenarios obscure. Cross-check headline temperature numbers against IEA, and flag the structural gaps noted in §11.2–11.3 when communicating results.</p></div>
+
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2 id="equations">12. Equation Quick Reference</h2>
+
+<table>
+  <tr><th>Module</th><th>Key equation</th></tr>
+  <tr><td>Switching rate</td><td class="note">switch_s = clamp(costAdv_s × COST_RESPONSE × RESP_s × frict_s, 0, maxDeploy_s)</td></tr>
+  <tr><td>Cost advantage</td><td class="note">costAdv_s = max(0, (lcoe_fossil_s − lcoe_clean_s) / lcoe_fossil_s)</td></tr>
+  <tr><td>Renewable LCOE</td><td class="note">lcoe_ren = max(14, LCOE_REN₀ × (1 − learnRate)^doublings − renewSubsidy)</td></tr>
+  <tr><td>Firmed LCOE</td><td class="note">lcoe_firmed = lcoe_ren + s₀ × max(0, (renew − 0.15) / 0.35)^1.8</td></tr>
+  <tr><td>Gas flex premium</td><td class="note">GAS_FLEX_PREMIUM = 15 + max(0, (renew − 0.40) / 0.40) × 15  [$/MWh]</td></tr>
+  <tr><td>Energy intensity</td><td class="note">EI(t+1) = max(EI_floor, EI(t) × (1 − totalEIrate))</td></tr>
+  <tr><td>TCRE correction</td><td class="note">tcreCorrFactor = 1 + max(0, (netCumCO₂ − 2000) / 15000)</td></tr>
+  <tr><td>Equilibrium temp</td><td class="note">T_eq = TEMP₀ + nonCO₂_increment + TCRE × netCumCO₂ × tcreCorrFactor</td></tr>
+  <tr><td>Temperature evolution</td><td class="note">T(t) = T(t−1) + (T_eq − T(t−1)) / 15</td></tr>
+  <tr><td>Non-CO₂ abatement fraction</td><td class="note">abateFrac = min(1, ctax_avg / 100)</td></tr>
+  <tr><td>GDP growth</td><td class="note">GDP(t+1) = GDP(t) × (1 + clamp(baseGDP − damageFrac × 0.12 − transDrag − cdrDrag, −5%, 9%))</td></tr>
+  <tr><td>CDR cost</td><td class="note">CDR_cost(t) = 300 × (1 − 0.05)^(t−2050)  [from 2050 only]</td></tr>
+  <tr><td>CDR deployment</td><td class="note">cdrRate = min(1, (ctax − CDR_cost) / CDR_cost) × CDR_MAX × min(1, yearsDeployed / 30)</td></tr>
+  <tr><td>Sea level rise</td><td class="note">SLR(t) = 0.80 × Σ max(0, T(yr) − 1.29)  [cm above 2024]</td></tr>
+  <tr><td>Oil demand (barrels)</td><td class="note">demand_mbpd = E_total × W_TRANS × fos_trans × 0.4477</td></tr>
+</table>
+
+<hr>
+<p style="font-family:var(--mono);font-size:.74rem;color:var(--muted)">Climate–Economy IAM Dashboard &nbsp;·&nbsp; User Manual &nbsp;·&nbsp; Revision 9 &nbsp;·&nbsp; May 2026 &nbsp;·&nbsp; Calibrated to IEA WEO 2025 and IPCC AR6 &nbsp;·&nbsp; For research and educational use only</p>
+
+</div>
+</body>
+</html>
