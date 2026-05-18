@@ -2,7 +2,7 @@
 
 A browser-based, first-order **Integrated Assessment Model** spanning 2024–2100. Couples a four-sector energy transition model with GDP dynamics, emissions accounting, climate physics, endogenous carbon removal, and supply curve feedbacks for oil and LNG.
 
-**[Open the dashboard →](https://yourusername.github.io/iam-dashboard/)**
+**[Open the dashboard →]((https://ivanapark1977-byte.github.io/global-warming-IAM/))**
 *(replace with your GitHub Pages URL after publishing)*
 
 ---
